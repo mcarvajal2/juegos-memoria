@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fdf6ec">
+  <title>La historia escondida · Memoria episódica</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/historia.css">
+  <script src="../js/historia.js" defer></script>
+</head>
+<body>
+  <main class="wrap historia" id="app">
+    <nav class="topbar" aria-label="Navegación principal">
+      <a class="back" href="../index.html">← Inicio</a>
+      <span class="eyebrow">Memoria episódica</span>
+    </nav>
+
+    <ul class="phases" aria-label="Fases de la actividad">
+      <li data-phase="inicio" class="active" aria-current="step">Inicio</li>
+      <li data-phase="desarrollo">Desarrollo</li>
+      <li data-phase="cierre">Cierre</li>
+    </ul>
+
+    <section id="screen-welcome" class="card screen" aria-labelledby="welcome-title">
+      <p class="eyebrow">Una actividad tranquila, a tu ritmo</p>
+      <h1 id="welcome-title">La historia escondida</h1>
+      <p class="intro">Mira cuatro escenas, escucha una historia y luego recordemos algunos detalles. Puedes tomarte todo el tiempo que necesites.</p>
+      <h2>Elige una historia</h2>
+      <div id="story-choices" class="story-choices"></div>
+    </section>
+
+    <section id="screen-look" class="card screen hidden" aria-labelledby="look-title" aria-live="polite">
+      <p class="eyebrow">Inicio · Observa las escenas</p>
+      <h1 id="look-title"></h1>
+      <p class="intro">Mira con calma las cuatro imágenes. Cuando quieras, escucha la historia.</p>
+      <div id="look-grid" class="scene-grid" aria-label="Cuatro escenas de la historia"></div>
+      <div class="row"><button class="btn big" id="start-story">Escuchar la historia</button><button class="btn ghost" data-action="choose">Elegir otra historia</button></div>
+    </section>
+
+    <section id="screen-story" class="card screen hidden" aria-labelledby="story-title" aria-live="polite">
+      <p class="eyebrow">Desarrollo · Escucha y recuerda</p>
+      <h1 id="story-title"></h1>
+      <p id="scene-count" class="scene-count"></p>
+      <div id="story-grid" class="scene-grid story-grid"></div>
+      <div class="narration" aria-live="polite">
+        <p id="narration-text"></p>
+        <button class="btn secondary" id="speak" type="button">🔊 Leer en voz alta</button>
+      </div>
+      <div class="row"><button class="btn big" id="next-scene">Siguiente</button></div>
+    </section>
+
+    <section id="screen-save" class="card screen hidden center" aria-labelledby="save-title" aria-live="polite">
+      <p class="eyebrow">Desarrollo · Un momento de pausa</p>
+      <h1 id="save-title">Guardemos las imágenes</h1>
+      <p class="intro">Las escenas van quedando a salvo en su sobre.</p>
+      <div id="save-grid" class="scene-grid save-grid" aria-label="Las cuatro imágenes se guardan en un sobre"></div>
+      <div class="envelope" aria-hidden="true">✉️</div>
+      <p id="save-message" class="feedback ok" aria-live="polite"></p>
+      <button id="begin-questions" class="btn big hidden">Continuar con las preguntas</button>
+    </section>
+
+    <section id="screen-question" class="card screen hidden" aria-labelledby="question-title" aria-live="polite">
+      <p class="eyebrow">Cierre · Recordemos</p>
+      <h1 id="question-title"></h1>
+      <div class="progress" role="progressbar" aria-label="Progreso de preguntas" aria-valuemin="1" aria-valuemax="4" aria-valuenow="1"><span id="question-progress"></span></div>
+      <p id="question-hint" class="intro"></p>
+      <div id="answer-options" class="answer-options"></div>
+      <p id="answer-feedback" class="feedback" role="status" aria-live="polite"></p>
+      <div class="row question-actions">
+        <button id="confirm-answer" class="btn big" type="button">Confirmar</button>
+        <button id="next-question" class="btn big hidden" type="button">Siguiente pregunta</button>
+      </div>
+    </section>
+
+    <section id="screen-order" class="card screen hidden" aria-labelledby="order-title" aria-live="polite">
+      <p class="eyebrow">Cierre · Actividad opcional</p>
+      <h1 id="order-title">Ordena la historia</h1>
+      <p class="intro">Usa los botones para poner los eventos en el orden en que ocurrieron.</p>
+      <ol id="order-list" class="order-list" aria-label="Eventos de la historia en el orden actual"></ol>
+      <p id="order-feedback" class="feedback" role="status" aria-live="polite"></p>
+      <div class="row order-actions">
+        <button id="check-order" class="btn big">Comprobar</button>
+        <button id="skip-order" class="btn ghost">Saltar</button>
+        <button id="finish-order" class="btn big hidden">Ver el resumen</button>
+      </div>
+    </section>
+
+    <section id="screen-results" class="card screen hidden" aria-labelledby="results-title">
+      <p class="eyebrow">Cierre · Actividad terminada</p>
+      <h1 id="results-title">Gracias por compartir esta historia</h1>
+      <p id="results-summary" class="intro"></p>
+      <p id="total-time" class="time-result"></p>
+      <details class="guide">
+        <summary>Para quien guía la actividad</summary>
+        <div class="table-scroll">
+          <div style="overflow-x:auto"><table class="results"><thead><tr><th>Pregunta</th><th>Respuesta dada</th><th>Respuesta correcta</th><th>Resultado</th></tr></thead><tbody id="results-rows"></tbody></table></div>
+        </div>
+        <h2>Sugerencias de uso</h2>
+        <ul><li>Hagan una pausa distractora de uno o dos minutos antes de preguntar.</li><li>Conversen sobre recuerdos propios parecidos, sin necesidad de que coincidan con la historia.</li><li>Otro día, pueden repetir la actividad con una historia distinta.</li></ul>
+      </details>
+      <div class="row results-actions"><button id="replay-story" class="btn secondary">Repetir esta historia</button><button id="new-story" class="btn big">Jugar otra historia</button></div>
+    </section>
+    <p class="sr-only" id="announcer" aria-live="polite"></p>
+  </main>
+</body>
+</html>

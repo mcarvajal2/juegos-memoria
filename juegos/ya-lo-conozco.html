@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ya lo conozco</title>
+  <meta name="description" content="Actividad de memoria implícita para niños: reconocer animales escondidos.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/conozco.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦊</text></svg>">
+</head>
+<body>
+  <main class="wrap">
+    <div class="topbar">
+      <a class="back" href="../index.html">← Inicio</a>
+      <button class="btn ghost sound-toggle" id="soundToggle" type="button" aria-pressed="true">🔊 Voz</button>
+    </div>
+
+    <ul class="phases" aria-label="Fases de la actividad">
+      <li data-phase="inicio">1 · Inicio</li>
+      <li data-phase="desarrollo">2 · Desarrollo</li>
+      <li data-phase="cierre">3 · Cierre</li>
+    </ul>
+
+    <!-- Bienvenida -->
+    <section id="screen-welcome" class="card center">
+      <div class="big-emoji" aria-hidden="true">🦊🐘🦉</div>
+      <h1>Ya lo conozco</h1>
+      <p>Primero vas a ver algunos animales. ¡Míralos con mucha atención!<br>
+        Después aparecerán animales <strong>escondidos</strong> y tendrás que adivinar cuál es.</p>
+      <details class="guide">
+        <summary>Opciones para quien guía la actividad</summary>
+        <div class="settings">
+          <label>Animales para mirar
+            <select id="optCount">
+              <option value="4">4</option>
+              <option value="6" selected>6</option>
+              <option value="8">8</option>
+            </select>
+          </label>
+          <label>Segundos por animal
+            <select id="optTime">
+              <option value="2">2 s</option>
+              <option value="3" selected>3 s</option>
+              <option value="4">4 s</option>
+            </select>
+          </label>
+          <label>Forma de esconder
+            <select id="optMode">
+              <option value="mix" selected>Mezcla (silueta y tapado)</option>
+              <option value="silhouette">Solo siluetas</option>
+              <option value="covered">Solo imagen tapada</option>
+            </select>
+          </label>
+        </div>
+        <p class="muted small">En el desarrollo aparecen mezclados los animales vistos y la misma cantidad de animales nuevos. Así se puede comparar si los ya vistos se reconocen más rápido (efecto de <em>priming</em> o memoria implícita).</p>
+      </details>
+      <div class="row" style="margin-top:20px">
+        <button class="btn big" id="btnStart" type="button">¡Empezar!</button>
+      </div>
+    </section>
+
+    <!-- Inicio: mirar animales -->
+    <section id="screen-study" class="card center hidden">
+      <p class="muted" id="studyCounter"></p>
+      <div class="progress"><span id="studyProgress"></span></div>
+      <div class="stage">
+        <div class="animal pop" id="studyAnimal" aria-live="polite"></div>
+      </div>
+      <h2 id="studyName"></h2>
+    </section>
+
+    <!-- Transición -->
+    <section id="screen-ready" class="card center hidden">
+      <div class="big-emoji" aria-hidden="true">🙈</div>
+      <h2>¡Muy bien!</h2>
+      <p>Ahora los animales se van a <strong>esconder</strong>.<br>
+        Mira la figura y, apenas sepas cuál es, toca <strong>“¡Ya sé!”</strong>.</p>
+      <div class="row" style="margin-top:16px">
+        <button class="btn big" id="btnGo" type="button">¡A jugar!</button>
+      </div>
+    </section>
+
+    <!-- Desarrollo: adivinar -->
+    <section id="screen-test" class="card center hidden">
+      <p class="muted" id="testCounter"></p>
+      <div class="progress"><span id="testProgress"></span></div>
+      <div class="stage">
+        <div class="hide-box" id="hideBox">
+          <div class="animal" id="testAnimal"></div>
+          <div class="tiles" id="tiles"></div>
+        </div>
+      </div>
+      <p class="hint muted" id="testHint">¿Qué animal es?</p>
+      <div class="row" id="knowRow">
+        <button class="btn big" id="btnKnow" type="button">¡Ya sé!</button>
+      </div>
+      <div class="options hidden" id="options" role="group" aria-label="Elige el animal"></div>
+      <p class="feedback" id="feedback" aria-live="polite"></p>
+      <div class="row">
+        <button class="btn secondary big hidden" id="btnNext" type="button">Siguiente →</button>
+      </div>
+    </section>
+
+    <!-- Cierre: resultados -->
+    <section id="screen-results" class="card center hidden">
+      <div class="big-emoji" aria-hidden="true" id="resultEmoji">🏆</div>
+      <h2 id="resultTitle">¡Lo lograste!</h2>
+      <p class="stars" id="stars" aria-hidden="true"></p>
+      <p id="resultText"></p>
+
+      <div class="compare">
+        <div class="compare-col">
+          <h3>👀 Ya los había visto</h3>
+          <div class="bar-wrap"><div class="bar seen" id="barSeen"></div></div>
+          <p id="sumSeen"></p>
+        </div>
+        <div class="compare-col">
+          <h3>✨ Animales nuevos</h3>
+          <div class="bar-wrap"><div class="bar new" id="barNew"></div></div>
+          <p id="sumNew"></p>
+        </div>
+      </div>
+      <p class="muted small">La barra muestra qué tan rápido reconoció cada grupo (más larga = más rápido).</p>
+
+      <details class="guide" style="text-align:left">
+        <summary>Para quien guía la actividad</summary>
+        <p id="guideSummary"></p>
+        <div style="overflow-x:auto">
+          <table class="results">
+            <thead>
+              <tr><th>Animal</th><th>¿Visto antes?</th><th>Forma</th><th>Tiempo</th><th>Descubierto</th><th>Respuesta</th></tr>
+            </thead>
+            <tbody id="resultsBody"></tbody>
+          </table>
+        </div>
+        <p class="small muted">
+          <strong>¿Qué se observa?</strong> Si la memoria implícita (priming) actúa, los animales vistos en el Inicio
+          deberían reconocerse con menos tiempo y con menos partes descubiertas que los animales nuevos, aunque el niño o la niña
+          no recuerde conscientemente haberlos visto. Se sugiere preguntar al final: <em>“¿Cuáles te resultaron más fáciles? ¿Por qué?”</em>
+        </p>
+      </details>
+
+      <div class="row" style="margin-top:20px">
+        <button class="btn big" id="btnAgain" type="button">Jugar otra vez</button>
+        <a class="btn ghost" href="../index.html">Volver al inicio</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="../js/conozco.js"></script>
+</body>
+</html>
